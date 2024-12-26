@@ -6,7 +6,8 @@ choose_browser() {
     echo "1. Google Chrome"
     echo "2. Brave Browser"
     echo "3. GanJing Browser"
-    read -p "Nhập số (1, 2, hoặc 3): " choice
+    echo "4. Microsoft Edge"
+    read -p "Nhập số (1, 2, 3, hoặc 4): " choice
 
     case $choice in
         1)
@@ -21,8 +22,12 @@ choose_browser() {
             BROWSER_NAME="GanJing Browser"
             USER_DATA_DIR="$HOME/Library/Application Support/GanJing"
             ;;
+        4)
+            BROWSER_NAME="Microsoft Edge"
+            USER_DATA_DIR="$HOME/Library/Application Support/Microsoft Edge"
+            ;;
         *)
-            echo "Lựa chọn không hợp lệ. Vui lòng chạy lại script và chọn 1, 2, hoặc 3."
+            echo "Lựa chọn không hợp lệ. Vui lòng chạy lại script và chọn 1, 2, 3, hoặc 4."
             exit 1
             ;;
     esac
@@ -30,6 +35,7 @@ choose_browser() {
 
 # Gọi hàm để chọn trình duyệt
 choose_browser
+
 echo "--------------------------------------"
 echo "Danh sách các ổ đĩa đã được mount trên máy của bạn:"
 
@@ -55,7 +61,7 @@ if [[ $choice -ge 1 && $choice -lt $count ]]; then
     echo "Bạn đã chọn ổ đĩa: ${volumes[choice]}"
     echo "-------------------------------------"
     selected_volume=${volumes[choice]}
-    
+
     # Thư mục đích trên ổ đĩa được chọn
     TARGET_DIR="/Volumes/$selected_volume/web_data/$BROWSER_NAME"
 
@@ -77,16 +83,12 @@ if [[ $choice -ge 1 && $choice -lt $count ]]; then
         # Tạo thư mục đích nếu chưa tồn tại
         echo "Thư mục đích $TARGET_DIR không tồn tại. Tạo thư mục và sao chép dữ liệu..."
         mkdir -p "$TARGET_DIR"
-
         # Sao chép toàn bộ nội dung thư mục user data của trình duyệt vào thư mục đích
         cp -R "$USER_DATA_DIR" "$TARGET_DIR"
-
         # Xóa thư mục user data hiện tại của trình duyệt
         rm -rf "$USER_DATA_DIR"
-
         # Tạo symlink từ thư mục user data đến thư mục trên ổ đĩa
         ln -s "$TARGET_DIR" "$USER_DATA_DIR"
-
         echo "Hoàn thành sao chép và tạo symlink cho $BROWSER_NAME!"
     fi
 else
